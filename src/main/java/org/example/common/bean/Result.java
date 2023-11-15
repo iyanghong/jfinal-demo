@@ -45,6 +45,7 @@ public class Result<T> implements Serializable {
         this.message = message;
     }
 
+
     public static Result<String> ofMsg(String msg) {
         return new Result<>(0, null, msg);
     }
@@ -53,6 +54,13 @@ public class Result<T> implements Serializable {
         return new Result<>(code, null, msg);
     }
 
+    public static Result<Object> ofSuccess(Object data) {
+        return new Result<>(0, data, "ok");
+    }
+
+    public static Result<Object> ofSuccess(String message, Object data) {
+        return new Result<>(0, data, message);
+    }
 
     public int getCode() {
         return code;
