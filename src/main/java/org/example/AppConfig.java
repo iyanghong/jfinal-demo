@@ -44,7 +44,12 @@ public class AppConfig extends JFinalConfig {
 //        arp.setShowSql(true);
 //        arp.setDevMode(true);
         arp.addSqlTemplate("enjoy/UserSqlTemplate.sql");
+        arp.addSqlTemplate("enjoy/Permission.sql");
+        arp.addSqlTemplate("enjoy/PermissionGroup.sql");
+        arp.addSqlTemplate("enjoy/Role.sql");
+        arp.addSqlTemplate("enjoy/UserRole.sql");
         arp.addSqlTemplate("enjoy/SystemConfig.sql");
+        arp.addSqlTemplate("enjoy/RolePermission.sql");
         plugins.add(arp);
         _MappingKit.mapping(arp);
 

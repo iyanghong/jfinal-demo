@@ -35,9 +35,13 @@ public class ConstantException {
     public static ConstantException ACCOUNT_ERROR_NUM = new ConstantException(1104, "密码错误{}次");
     public static ConstantException ACCOUNT_ERROR_NUM_MAX = new ConstantException(1105, "密码错误次数超过{}次，已被冻结");
     public static ConstantException DATA_NOT_FOUND = new ConstantException(1110, "该{}不存在");
+    public static ConstantException PARAMETER_VERIFICATION_FAIL = new ConstantException(1111, "校验失败，{}");
     public static ConstantException NOT_LOGGED_IN = new ConstantException(2001, "未登录");
     public static ConstantException LOGIN_EXPIRES = new ConstantException(2002, "登录失效");
     public static ConstantException NO_PERMISSION = new ConstantException(2003, "无权限");
     public static ConstantException NO_PERMISSION_BY_PARAM = new ConstantException(2003, "无{}权限");
+
+    //程序错误
+    public static ConstantException PROGRAM_ERROR = new ConstantException(5000, "{}");
 
 }

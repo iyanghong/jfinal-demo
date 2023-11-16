@@ -52,13 +52,28 @@ public class SystemConfigServiceImpl extends BaseService<SystemConfig> implement
         }).get();
     }
 
-    public void add(SystemConfig systemConfig) {
-        systemConfig.setUuid(UUID.randomUUID().toString());
-        systemConfig.save();
+    public void delete(String uuid) {
+        SystemConfig systemConfig = getFirstByUuid(new SystemConfig(), "systemConfig.getByParam", uuid);
+        if (systemConfig == null) {
+            throw new BaseException(ConstantException.DATA_NOT_FOUND, "系统配置");
+        }
+        systemConfig.delete();
+        log.info("系统配置-删除系统配置成功，systemConfig={}", uuid);
     }
 
+    /**
+     * 添加系统配置
+     *
+     * @param newSystemConfig
+     */
     public void addConfig(SystemConfig newSystemConfig) {
         SystemConfig systemConfig = new SystemConfig().findFirst(Db.template("systemConfig.getByCode", newSystemConfig.getCode()).getSqlPara());
+        if (systemConfig != null) {
+            throw new BaseException(ConstantException.PARAMETER_VERIFICATION_FAIL, "已存在同名Code");
+        }
+        newSystemConfig.setUuid(UUID.randomUUID().toString());
+        newSystemConfig.save();
+        log.info("系统配置-新增系统配置成功，code={}", newSystemConfig.getCode());
     }
 
     public void updateConfig(SystemConfig newSystemConfig) {
@@ -70,6 +85,6 @@ public class SystemConfigServiceImpl extends BaseService<SystemConfig> implement
         newSystemConfig.update();
         // 更新缓存
         Redis.use().set(systemConfig.getCode(), systemConfig.getValue());
-        log.info("修改系统配置成功,config={},code={}", systemConfig.getUuid(), systemConfig.getCode());
+        log.info("系统配置-修改系统配置成功,config={},code={}", systemConfig.getUuid(), systemConfig.getCode());
     }
 }

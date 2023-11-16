@@ -4,8 +4,25 @@ import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Model;
 import com.jfinal.plugin.activerecord.Page;
+import org.example.common.exception.BaseException;
+import org.example.common.exception.ConstantException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class BaseService<M extends Model<M>> {
+
+    /**
+     * 根据参数获取所有数据列表
+     *
+     * @param model          model
+     * @param templateSqlKey sql 的key
+     * @param param          参数
+     * @return
+     */
+    public List<M> getAllByParam(M model, String templateSqlKey, Kv param) {
+        return model.find(Db.template(templateSqlKey, Kv.of("param", param)).getSqlPara());
+    }
 
 
     /**
@@ -36,6 +53,7 @@ public class BaseService<M extends Model<M>> {
 
     /**
      * 根据uuid获取
+     *
      * @param model
      * @param templateSqlKey
      * @param uuid

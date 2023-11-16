@@ -24,9 +24,6 @@ public class ModelGenerator {
      * 2：部分功能使用 Db + Record 模式实现，所涉及到的 table 也不参与生成
      */
     private final static String[] blacklist = {
-            "login_log",
-            "account_role",
-            "role_permission"
     };
 
     /**
