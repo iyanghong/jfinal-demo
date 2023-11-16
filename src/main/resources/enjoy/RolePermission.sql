@@ -7,7 +7,7 @@
     #end
 
     #sql("deleteNeedDeleteList")
-        delete from role_permission where role = #para(0) and permission #para(1, "not in")
+        delete from role_permission where role = #para(0) and permission not in #para(1, "in")
     #end
 
 #end

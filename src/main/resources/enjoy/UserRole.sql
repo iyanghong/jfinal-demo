@@ -7,6 +7,8 @@
     #end
 
     #sql("deleteNeedDeleteList")
-        delete from user_role where user = #para(0) and role #para(1, "not in")
+        delete from user_role where
+        user = #para(0)
+        and role not in  #para(1, "in")
     #end
 #end

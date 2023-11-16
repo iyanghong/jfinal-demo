@@ -9,6 +9,7 @@ import com.jfinal.plugin.redis.RedisPlugin;
 import com.jfinal.template.Engine;
 import org.example.jfinal.filter.DruidSqlLogFilter;
 import org.example.jfinal.interceptor.AuthInterceptor;
+import org.example.jfinal.interceptor.CrossInterceptor;
 import org.example.jfinal.interceptor.ExceptionInterceptor;
 import org.example.jfinal.system.model._MappingKit;
 import org.example.jfinal.system.route.SystemRoutes;
@@ -61,10 +62,12 @@ public class AppConfig extends JFinalConfig {
 
     @Override
     public void configInterceptor(Interceptors interceptors) {
+        interceptors.add(new CrossInterceptor());
         //验证权限
         interceptors.add(new AuthInterceptor());
         // 全局异常拦截
         interceptors.add(new ExceptionInterceptor());
+
     }
 
     @Override

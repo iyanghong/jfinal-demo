@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.example.Constant;
 import org.example.common.utils.JwtUtil;
 import org.example.jfinal.system.vo.OnlineUser;
+
 import java.util.Map;
 
 public class BaseController extends Controller {
@@ -16,6 +17,7 @@ public class BaseController extends Controller {
         if (onlineUser != null) return onlineUser;
         //从 http 请求头中取出 token
         String token = getRequest().getHeader("token");
+        if (StringUtils.isBlank(token)) return null;
         //验证 token
         if (!JwtUtil.checkSign(token)) {
             return null;
