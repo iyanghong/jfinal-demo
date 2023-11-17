@@ -92,7 +92,8 @@ public class JwtUtil {
             verifier.verify(token);
             return true;
         } catch (JWTVerificationException e) {
-            throw new RuntimeException("token_invalid");
+//            throw new RuntimeException("登录失效啦");
+            return  false;
         }
     }
 }

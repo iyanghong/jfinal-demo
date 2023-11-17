@@ -9,6 +9,6 @@
     #sql("deleteNeedDeleteList")
         delete from user_role where
         user = #para(0)
-        and role not in  #para(1, "in")
+        and role not in (select uuid from role where instr(#para(1),uuid) > 0)
     #end
 #end

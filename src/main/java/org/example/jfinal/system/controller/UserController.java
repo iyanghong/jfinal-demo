@@ -10,6 +10,7 @@ import org.example.common.controller.BaseController;
 import org.example.common.exception.BaseException;
 import org.example.common.exception.ConstantException;
 import org.example.common.utils.CacheRememberUtil;
+import org.example.jfinal.interceptor.AdminAuth;
 import org.example.jfinal.interceptor.Auth;
 import org.example.jfinal.system.model.User;
 import org.example.jfinal.system.service.UserService;
@@ -65,6 +66,16 @@ public class UserController extends BaseController {
     }
 
 
+    @Auth(value = "user.getUserRolesAdmin", name = "获取用户角色列表")
+    public void getUserRolesAdmin(@Para("userUuid") String userUuid) {
+        if (StringUtils.isBlank(userUuid)) {
+            throw new BaseException(ConstantException.PARAMETER_VERIFICATION_FAIL, "用户UUI不能为空");
+        }
+        renderJson(Result.ofSuccess(userService.getUserRolesAdmin(userUuid)));
+    }
+
+
+    @Auth(value = "user.updatePassword", name = "用户更新密码")
     public void updatePassword(@Para("oldPassword") String oldPassword, @Para("newPassword") String newPassword) {
         OnlineUser onlineUser = getCurrentUser();
         if (onlineUser == null) {
@@ -73,6 +84,12 @@ public class UserController extends BaseController {
         }
         userService.updatePassword(onlineUser.getUuid(), oldPassword, newPassword);
         renderJson(Result.ofSuccess(null, "修改密码成功"));
+    }
+
+    @Auth(value = "user.update", name = "修改用户信息")
+    public void update(@Para("") User user) {
+        userService.update(user);
+        renderJson(Result.ofSuccess(null, "修改信息成功"));
     }
 
 
@@ -84,6 +101,7 @@ public class UserController extends BaseController {
      * @param gender
      * @param signature
      */
+    @Auth(value = "user.updateUserBaseData", name = "用户修改基本信息")
     public void updateUserBaseData(@Para("header") String header, @Para("nickname") String nickname, @Para("gender") String gender, @Para("signature") String signature) {
         OnlineUser onlineUser = getCurrentUser();
         if (onlineUser == null) {

@@ -29,9 +29,14 @@ public class BaseController extends Controller {
     }
 
     protected Integer getPageNumberParam() {
+        String pageNumberBeforeZero = getPara("pageNumberBeforeZero");
         String pageNumber = getPara("pageNumber");
         if (StringUtils.isNotBlank(pageNumber)) {
-            return Integer.parseInt(pageNumber);
+            int num = Integer.parseInt(pageNumber);
+            if ("1".equals(pageNumberBeforeZero)) {
+                num = num + 1;
+            }
+            return num;
         }
         return Constant.DEFAULT_PAGE_NUMBER;
     }

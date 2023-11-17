@@ -1,8 +1,13 @@
 package org.example.jfinal.system.service;
 
 import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
+import org.example.jfinal.system.model.Permission;
+import org.example.jfinal.system.model.Role;
 import org.example.jfinal.system.model.User;
 import org.example.jfinal.system.vo.OnlineUser;
+
+import java.util.List;
 
 public interface UserService {
     /**
@@ -27,4 +32,12 @@ public interface UserService {
      * @return
      */
     Page<User> getList(Integer pageNumber, Integer pageSize, String account, String email, String phone, String gender, String status);
+
+    void update(User newUser);
+    List<Role> getUserRoles(String userUuid);
+    List<Record> getUserRolesAdmin(String userUuid);
+    List<Permission> getUserPermission(String userUuid);
+    void resetPassword(String userUuid);
+    void updatePassword(String userUuid, String oldPassword, String newPassword);
+    OnlineUser updateOnlineUser(String uuid);
 }

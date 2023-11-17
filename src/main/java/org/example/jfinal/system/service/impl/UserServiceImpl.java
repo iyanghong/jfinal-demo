@@ -4,6 +4,7 @@ import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.redis.Redis;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
@@ -136,6 +137,15 @@ public class UserServiceImpl extends BaseService<User> {
         return new Role().find(Db.template("user.getUserRoles", userUuid).getSqlPara());
     }
 
+    public List<Record> getUserRolesAdmin(String userUuid) {
+        List<Record> list = Db.template("user.getUserRolesAdmin", userUuid).find();
+
+        for (Record record : list) {
+            record.set("checked", record.get("checked").equals("1"));
+        }
+        return list;
+    }
+
     /**
      * 获取用户的权限列表
      *
@@ -166,7 +176,15 @@ public class UserServiceImpl extends BaseService<User> {
         ParamUtils.ifSetParam(param, "phone = ", phone);
         ParamUtils.ifSetParam(param, "gender = ", gender);
         ParamUtils.ifSetParam(param, "status = ", status);
-        return getListByParam(new User(), pageNumber, pageSize, "user.getByParam", param);
+        Page<User> page = getListByParam(new User(), pageNumber, pageSize, "user.getByParam", param);
+        for (User user : page.getList()) {
+            if ("90359963f3c04f528d7f2b1e1848cf36".equals(user.getDisk())) {
+                user.setHeader("https://resources.iyanghong.cn/" + user.getHeader());
+            } else if ("e650077ba2cc462f950bd929af822104".equals(user.getDisk())) {
+                user.setHeader("https://resource.zzlcjj.xyz/" + user.getHeader());
+            }
+        }
+        return page;
     }
 
 
@@ -206,10 +224,12 @@ public class UserServiceImpl extends BaseService<User> {
     /**
      * 更新当前登录用户数据
      *
-     * @param onlineUser
+     * @param uuid
      */
-    public OnlineUser updateOnlineUser(OnlineUser onlineUser) {
-        User user = new User().findById(onlineUser.getId());
+    public OnlineUser updateOnlineUser(String uuid) {
+        OnlineUser onlineUser = Redis.use().get(Constant.ONLINE_USER_CACHE_KEY + uuid);
+        if (onlineUser == null) return null;
+        User user = getFirstByUuid(new User(), "user.getByParam", uuid);
         List<Role> roles = getUserRoles(user.getUuid());
         List<Permission> permissionList = getUserPermission(user.getUuid());
         List<String> permissions = new ArrayList<>();
@@ -244,8 +264,36 @@ public class UserServiceImpl extends BaseService<User> {
             user.setSignature(signature);
         }
         user.update();
-        updateOnlineUser(onlineUser);
+        updateOnlineUser(user.getUuid());
+    }
+
+    public void update(User newUser) {
+        if (getFirstByUuid(new User(), "user.getByParam", newUser.getUuid()) == null) {
+            throw new BaseException(ConstantException.DATA_NOT_FOUND, "用户");
+        }
+        if (StringUtils.isNotBlank(newUser.getEmail()) && checkEmailIsExist(newUser.getEmail(), newUser.getUuid())) {
+            throw new BaseException(ConstantException.PARAMETER_VERIFICATION_FAIL, "该邮箱已被注册");
+        }
+        if (StringUtils.isNotBlank(newUser.getPhone()) && checkPhoneIsExist(newUser.getPhone(), newUser.getUuid())) {
+            throw new BaseException(ConstantException.PARAMETER_VERIFICATION_FAIL, "该手机号已被注册");
+        }
+        newUser.update();
     }
 
 
+    private boolean checkEmailIsExist(String email, String userUuid) {
+        Kv param = Kv.create();
+        param.set("email = ", email);
+        ParamUtils.ifSetParam(param, "uuid != ", userUuid);
+        User user = new User().findFirst(Db.template("user.getByParam", Kv.of("param", param)).getSqlPara());
+        return user != null;
+    }
+
+    private boolean checkPhoneIsExist(String phone, String userUuid) {
+        Kv param = Kv.create();
+        param.set("phone = ", phone);
+        ParamUtils.ifSetParam(param, "uuid != ", userUuid);
+        User user = new User().findFirst(Db.template("user.getByParam", Kv.of("param", param)).getSqlPara());
+        return user != null;
+    }
 }

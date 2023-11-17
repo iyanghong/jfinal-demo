@@ -45,7 +45,10 @@ public class DruidSqlLogFilter extends FilterAdapter {
             // 这里可以使用数据库类型常量
             String dbType = statement.getConnectionProxy().getDirectDataSource().getDbType();
             if (formatSQL) {
-                sql = SQLUtils.format(sql, dbType, parameters, SQLUtils.DEFAULT_LCASE_FORMAT_OPTION);
+                try {
+                    sql = SQLUtils.format(sql, dbType, parameters, SQLUtils.DEFAULT_LCASE_FORMAT_OPTION);
+                }catch (Exception exception){}
+
             }
         }
 

@@ -42,8 +42,6 @@ public class AppConfig extends JFinalConfig {
         dp.addFilter(new DruidSqlLogFilter(true));
         plugins.add(dp);
         ActiveRecordPlugin arp = new ActiveRecordPlugin(dp);
-//        arp.setShowSql(true);
-//        arp.setDevMode(true);
         arp.addSqlTemplate("enjoy/UserSqlTemplate.sql");
         arp.addSqlTemplate("enjoy/Permission.sql");
         arp.addSqlTemplate("enjoy/PermissionGroup.sql");
